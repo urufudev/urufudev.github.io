@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Sitemap: https://urufudev.github.io/sitemap.xml
+Host: https://urufudev.github.io
