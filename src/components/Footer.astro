@@ -6,7 +6,7 @@ interface Props {
 }
 
 const { profile } = Astro.props;
-const base = import.meta.env.BASE_URL;
+const base = '';
 const year = new Date().getFullYear();
 const gitSha = (import.meta.env.GITHUB_SHA ?? 'local').slice(0, 7);
 ---
@@ -25,7 +25,7 @@ const gitSha = (import.meta.env.GITHUB_SHA ?? 'local').slice(0, 7);
 
       <div class="flex items-center gap-4">
         <a
-          href="https://github.com/urufudev/portfolio-astro-v1"
+          href="https://github.com/urufudev/urufudev.github.io"
           target="_blank"
           rel="noopener noreferrer"
           class="hover:text-accent transition-colors duration-150 btn-tactile"

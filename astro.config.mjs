@@ -5,7 +5,6 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   site: 'https://urufudev.github.io',
-  base: '/portfolio-astro-v1',
   output: 'static',
   integrations: [alpinejs(), sitemap()],
   vite: {

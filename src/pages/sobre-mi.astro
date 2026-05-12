@@ -9,7 +9,7 @@ const experiences = await getExperiences();
 const education = await getEducation();
 const techGroups = await getTechnologies();
 
-const base = import.meta.env.BASE_URL;
+const base = '';
 
 // Parse markdown content
 const bioHtml = profile.bio ? marked.parse(profile.bio, { async: false }) as string : '';

@@ -48,7 +48,7 @@
 @layer base {
   @font-face {
     font-family: "Geist Sans";
-    src: url("/portfolio-astro-v1/fonts/GeistSans-Variable.woff2") format("woff2");
+    src: url("/fonts/GeistSans-Variable.woff2") format("woff2");
     font-weight: 100 900;
     font-style: normal;
     font-display: swap;
@@ -56,7 +56,7 @@
 
   @font-face {
     font-family: "Geist Mono";
-    src: url("/portfolio-astro-v1/fonts/GeistMono-Variable.woff2") format("woff2");
+    src: url("/fonts/GeistMono-Variable.woff2") format("woff2");
     font-weight: 100 900;
     font-style: normal;
     font-display: swap;

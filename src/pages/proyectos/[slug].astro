@@ -22,7 +22,7 @@ const currentIndex = projects.findIndex((p) => p.slug === slug);
 const prevProject = currentIndex > 0 ? projects[currentIndex - 1] : null;
 const nextProject = currentIndex < projects.length - 1 ? projects[currentIndex + 1] : null;
 
-const base = import.meta.env.BASE_URL;
+const base = '';
 
 const techByCategory = project.technologies.reduce<Record<string, typeof project.technologies>>((acc, tech) => {
   if (!acc[tech.category_label]) acc[tech.category_label] = [];

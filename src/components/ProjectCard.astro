@@ -6,7 +6,7 @@ interface Props {
 }
 
 const { project } = Astro.props;
-const base = import.meta.env.BASE_URL;
+const base = '';
 
 const displayTech = project.technologies.slice(0, 3);
 const extraTechCount = project.technologies.length - 3;
