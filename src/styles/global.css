@@ -1,19 +1,40 @@
 @import "tailwindcss";
 
+/* CSS Custom Properties that switch with .dark class */
+:root {
+  --bg: #fafaf8;
+  --text: #18181b;
+  --secondary: #71717a;
+  --surface: #f4f4f2;
+  --border: #e4e4e7;
+  --accent: #2d6a4f;
+  --accent-hover: #24583f;
+  --accent-muted: rgba(45, 106, 79, 0.08);
+  --error: #dc2626;
+}
+
+.dark {
+  --bg: #0f0f0e;
+  --text: #e8e8e5;
+  --secondary: #a1a1aa;
+  --surface: #1a1a18;
+  --border: #27272a;
+  --accent: #40916c;
+  --accent-hover: #52b788;
+  --accent-muted: rgba(64, 145, 108, 0.12);
+  --error: #ef4444;
+}
+
 @theme {
-  --color-bg: #fafaf8;
-  --color-bg-dark: #0f0f0e;
-  --color-text: #18181b;
-  --color-text-dark: #e8e8e5;
-  --color-secondary: #71717a;
-  --color-surface: #f4f4f2;
-  --color-surface-dark: #1a1a18;
-  --color-border: #e4e4e7;
-  --color-border-dark: #27272a;
-  --color-accent: #2d6a4f;
-  --color-accent-hover: #24583f;
-  --color-accent-muted: rgba(45, 106, 79, 0.08);
-  --color-error: #dc2626;
+  --color-bg: var(--bg);
+  --color-text: var(--text);
+  --color-secondary: var(--secondary);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-muted: var(--accent-muted);
+  --color-error: var(--error);
 
   --font-sans: "Geist Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono", ui-monospace, monospace;
@@ -47,15 +68,16 @@
 
   body {
     font-family: var(--font-sans);
-    background-color: var(--color-bg);
-    color: var(--color-text);
+    background-color: var(--bg);
+    color: var(--text);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color 200ms ease, color 200ms ease;
   }
 
   ::selection {
-    background-color: var(--color-accent);
-    color: white;
+    background-color: var(--accent);
+    color: #ffffff;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -73,17 +95,10 @@
     height: auto;
   }
 
-  /* Focus ring in accent color */
   *:focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
     border-radius: 2px;
-  }
-
-  /* Dark mode support via class */
-  .dark body {
-    background-color: var(--color-bg-dark);
-    color: var(--color-text-dark);
   }
 }
 
@@ -100,27 +115,10 @@
     text-wrap: balance;
   }
 
-  /* Structural line system */
-  .line-y {
-    border-left: 1px solid var(--color-border);
-  }
-
-  .line-x {
-    border-top: 1px solid var(--color-border);
-  }
-
-  .line-dashed-y {
-    border-left: 1px dashed var(--color-border);
-  }
-
-  .line-dashed-x {
-    border-top: 1px dashed var(--color-border);
-  }
-
   /* Architectural divider */
   .arch-divider {
     height: 1px;
-    background: linear-gradient(90deg, transparent 0%, var(--color-border) 15%, var(--color-border) 85%, transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, var(--border) 15%, var(--border) 85%, transparent 100%);
   }
 
   /* Section marker - small label with line */
@@ -128,7 +126,7 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    color: var(--color-secondary);
+    color: var(--secondary);
     font-family: var(--font-mono);
     font-size: 11px;
     text-transform: uppercase;
@@ -140,26 +138,7 @@
     display: block;
     width: 24px;
     height: 1px;
-    background-color: var(--color-border);
-  }
-
-  /* Structural grid overlay (subtle) */
-  .grid-overlay {
-    position: relative;
-  }
-
-  .grid-overlay::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.25;
-    background-image:
-      linear-gradient(var(--color-border) 1px, transparent 1px),
-      linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
-    background-size: 40px 40px;
-    mask-image: linear-gradient(to bottom, black 0%, transparent 60%);
-    -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 60%);
+    background-color: var(--border);
   }
 
   /* Active tactile feedback */
@@ -169,6 +148,96 @@
 
   .btn-tactile:active {
     transform: translateY(1px) scale(0.98);
+  }
+
+  /* Markdown content styles */
+  .md-content {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text);
+    max-width: 65ch;
+  }
+
+  .md-content p {
+    margin-bottom: 1rem;
+  }
+
+  .md-content ul {
+    list-style: disc;
+    padding-left: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .md-content ol {
+    list-style: decimal;
+    padding-left: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .md-content h2 {
+    font-size: 20px;
+    font-weight: 500;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .md-content h3 {
+    font-size: 17px;
+    font-weight: 500;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .md-content a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .md-content a:hover {
+    color: var(--accent-hover);
+  }
+
+  .md-content blockquote {
+    border-left: 2px solid var(--border);
+    padding-left: 1rem;
+    font-style: italic;
+    color: var(--secondary);
+    margin-bottom: 1rem;
+  }
+
+  .md-content code {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    background-color: var(--surface);
+    padding: 0.125rem 0.375rem;
+    border-radius: 3px;
+  }
+
+  .md-content pre {
+    background-color: var(--surface);
+    padding: 1rem;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+
+  .md-content pre code {
+    background: none;
+    padding: 0;
+  }
+
+  .md-content hr {
+    border: none;
+    height: 1px;
+    background: var(--border);
+    margin: 2rem 0;
+  }
+
+  .md-content strong {
+    font-weight: 600;
   }
 }
 
