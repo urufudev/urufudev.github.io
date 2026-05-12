@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #fafaf8;
+  --color-bg-dark: #0f0f0e;
+  --color-text: #18181b;
+  --color-text-dark: #e8e8e5;
+  --color-secondary: #71717a;
+  --color-surface: #f4f4f2;
+  --color-surface-dark: #1a1a18;
+  --color-border: #e4e4e7;
+  --color-border-dark: #27272a;
+  --color-accent: #2d6a4f;
+  --color-accent-hover: #24583f;
+  --color-error: #dc2626;
+
+  --font-sans: "Geist Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+
+  --container-main: 780px;
+  --container-sidebar: 240px;
+
+  --transition-duration-600: 600ms;
+}
+
+@layer base {
+  @font-face {
+    font-family: "Geist Sans";
+    src: url("/portfolio-astro-v1/fonts/GeistSans-Variable.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Geist Mono";
+    src: url("/portfolio-astro-v1/fonts/GeistMono-Variable.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: white;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 500;
+    text-wrap: balance;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Dark mode support via class */
+  .dark body {
+    background-color: var(--color-bg-dark);
+    color: var(--color-text-dark);
+  }
+}
+
+@layer components {
+  .container-main {
+    max-width: var(--container-main);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}

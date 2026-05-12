@@ -1,0 +1,57 @@
+---
+import type { Project } from '../lib/types';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const base = import.meta.env.BASE_URL;
+
+const displayTech = project.technologies.slice(0, 3);
+const extraTechCount = project.technologies.length - 3;
+---
+
+<article class="group border border-border rounded-lg overflow-hidden transition-colors duration-150 ease hover:border-accent bg-bg">
+  <a href={`${base}/proyectos/${project.slug}`} class="block">
+    <div class="aspect-video bg-surface overflow-hidden relative">
+      {project.featured_image_url ? (
+        <img
+          src={project.featured_image_url}
+          alt={`Captura de ${project.title}`}
+          loading="lazy"
+          class="w-full h-full object-cover transition-transform duration-300 ease group-hover:scale-[1.02]"
+          width="780"
+          height="439"
+        />
+      ) : (
+        <div class="w-full h-full flex items-center justify-center" style="font-family: var(--font-mono)">
+          <span class="text-secondary text-2xl">{project.title.charAt(0).toUpperCase()}</span>
+        </div>
+      )}
+    </div>
+
+    <div class="p-5">
+      <h3 class="text-[17px] font-medium text-text leading-snug group-hover:text-accent transition-colors duration-150">
+        {project.title}
+      </h3>
+
+      {project.short_description && (
+        <p class="mt-2 text-[15px] text-secondary leading-relaxed line-clamp-2">
+          {project.short_description}
+        </p>
+      )}
+
+      <div class="mt-4 flex flex-wrap items-center gap-2" style="font-family: var(--font-mono)">
+        {displayTech.map((tech) => (
+          <span class="inline-flex items-center px-2 py-0.5 text-[11px] bg-surface text-text rounded">
+            {tech.name}
+          </span>
+        ))}
+        {extraTechCount > 0 && (
+          <span class="text-[11px] text-secondary">+{extraTechCount} más</span>
+        )}
+      </div>
+    </div>
+  </a>
+</article>

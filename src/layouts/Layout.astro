@@ -1,0 +1,43 @@
+---
+import '../styles/global.css';
+import { getProfile } from '../lib/api';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const profile = await getProfile();
+const { title, description = profile.bio ?? profile.professional_title } = Astro.props;
+const pageTitle = title ? `${title} · ${profile.name}` : profile.name;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}/favicon.svg`} />
+    <slot name="head" />
+  </head>
+  <body class="min-h-screen">
+    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-bg focus:text-text focus:border focus:border-border focus:rounded-md">
+      Saltar al contenido
+    </a>
+
+    <div class="flex flex-col lg:flex-row min-h-screen">
+      <Navigation profile={profile} />
+
+      <main id="main" class="flex-1 min-w-0">
+        <slot />
+        <Footer profile={profile} />
+      </main>
+    </div>
+
+
+  </body>
+</html>

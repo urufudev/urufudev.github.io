@@ -1,0 +1,166 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getProfile } from '../lib/api';
+
+const profile = await getProfile();
+const base = import.meta.env.BASE_URL;
+---
+
+<Layout title="Contacto">
+  <section class="pt-12 lg:pt-16 pb-6">
+    <div class="container-main">
+      <h1 class="text-[28px] lg:text-[40px] font-medium tracking-tight text-text">Contacto</h1>
+      <p class="mt-4 text-[16px] leading-[1.7] text-text max-w-[65ch]">
+        Si tienes una pregunta, una idea o simplemente quieres hablar de código, escríbeme. Respondo en cuanto puedo.
+      </p>
+    </div>
+  </section>
+
+  <section class="py-6 pb-20">
+    <div class="container-main max-w-[600px]">
+      <div
+        data-api-url={import.meta.env.PUBLIC_API_URL ?? 'https://cv.dreayacucho.gob.pe/api'}
+        x-data="{
+          name: '',
+          email: '',
+          subject: '',
+          message: '',
+          website: '',
+          status: 'idle',
+          errors: {},
+          errorMessage: '',
+          async submit() {
+            if (this.website) return; // Honeypot
+            this.status = 'loading';
+            this.errors = {};
+            this.errorMessage = '';
+            const apiUrl = $el.closest('[data-api-url]')?.dataset?.apiUrl || 'https://cv.dreayacucho.gob.pe/api';
+            try {
+              const res = await fetch(apiUrl + '/contact', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Accept: 'application/json',
+                },
+                body: JSON.stringify({
+                  name: this.name,
+                  email: this.email,
+                  subject: this.subject || undefined,
+                  message: this.message,
+                }),
+              });
+              if (res.status === 422) {
+                const data = await res.json();
+                this.errors = data.errors || {};
+                this.status = 'error';
+                return;
+              }
+              if (res.status === 429) {
+                this.errorMessage = 'Demasiados intentos. Intenta en un momento.';
+                this.status = 'error';
+                return;
+              }
+              if (!res.ok) throw new Error();
+              this.status = 'success';
+              this.name = '';
+              this.email = '';
+              this.subject = '';
+              this.message = '';
+            } catch {
+              this.errorMessage = 'Algo salió mal. Intenta de nuevo o escríbeme directamente a ' + '${profile.email}';
+              this.status = 'error';
+            }
+          }
+        }"
+        @submit.prevent="submit"
+      >
+        <form class="space-y-6">
+          {/* Honeypot */}
+          <div class="absolute opacity-0 pointer-events-none" aria-hidden="true">
+            <input type="text" name="website" tabindex="-1" autocomplete="off" x-model="website" />
+          </div>
+
+          {/* Name */}
+          <div>
+            <label for="name" class="block text-[12px] uppercase tracking-[0.08em] text-secondary mb-2" style="font-family: var(--font-mono)">Nombre</label>
+            <input
+              type="text"
+              id="name"
+              x-model="name"
+              required
+              maxlength="255"
+              class="w-full bg-transparent border-0 border-b border-border py-2 text-[15px] text-text placeholder:text-secondary/40 focus:outline-none focus:border-accent transition-colors duration-150"
+              placeholder="Tu nombre"
+            />
+            <p x-show="errors.name" x-text="errors.name?.[0]" class="mt-1.5 text-[13px] text-error" style="display: none;"></p>
+          </div>
+
+          {/* Email */}
+          <div>
+            <label for="email" class="block text-[12px] uppercase tracking-[0.08em] text-secondary mb-2" style="font-family: var(--font-mono)">Email</label>
+            <input
+              type="email"
+              id="email"
+              x-model="email"
+              required
+              maxlength="255"
+              class="w-full bg-transparent border-0 border-b border-border py-2 text-[15px] text-text placeholder:text-secondary/40 focus:outline-none focus:border-accent transition-colors duration-150"
+              placeholder="tu@email.com"
+            />
+            <p x-show="errors.email" x-text="errors.email?.[0]" class="mt-1.5 text-[13px] text-error" style="display: none;"></p>
+          </div>
+
+          {/* Subject */}
+          <div>
+            <label for="subject" class="block text-[12px] uppercase tracking-[0.08em] text-secondary mb-2" style="font-family: var(--font-mono)">Asunto <span class="normal-case text-secondary/50">(opcional)</span></label>
+            <input
+              type="text"
+              id="subject"
+              x-model="subject"
+              maxlength="255"
+              class="w-full bg-transparent border-0 border-b border-border py-2 text-[15px] text-text placeholder:text-secondary/40 focus:outline-none focus:border-accent transition-colors duration-150"
+              placeholder="¿De qué se trata?"
+            />
+          </div>
+
+          {/* Message */}
+          <div>
+            <label for="message" class="block text-[12px] uppercase tracking-[0.08em] text-secondary mb-2" style="font-family: var(--font-mono)">Mensaje</label>
+            <textarea
+              id="message"
+              x-model="message"
+              required
+              maxlength="5000"
+              rows="5"
+              class="w-full bg-transparent border-0 border-b border-border py-2 text-[15px] text-text placeholder:text-secondary/40 focus:outline-none focus:border-accent transition-colors duration-150 resize-y"
+              placeholder="Escribe tu mensaje..."
+            ></textarea>
+            <p x-show="errors.message" x-text="errors.message?.[0]" class="mt-1.5 text-[13px] text-error" style="display: none;"></p>
+          </div>
+
+          {/* Submit */}
+          <div class="pt-2">
+            <button
+              type="submit"
+              :disabled="status === 'loading'"
+              class="inline-flex items-center gap-2 text-[15px] text-accent hover:text-white hover:bg-accent px-4 py-2 -ml-4 rounded transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <template x-if="status === 'loading'">
+                <svg class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+              </template>
+              <span x-text="status === 'loading' ? 'Enviando...' : 'Enviar mensaje'"></span>
+            </button>
+          </div>
+
+          {/* Success message */}
+          <div x-show="status === 'success'" class="text-[15px] text-accent" style="display: none;">
+            Mensaje enviado. Te respondo pronto.
+          </div>
+
+          {/* General error */}
+          <div x-show="status === 'error' && errorMessage" x-text="errorMessage" class="text-[15px] text-error" style="display: none;"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+</Layout>

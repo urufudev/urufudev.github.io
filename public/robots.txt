@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dreayacucho.github.io/portfolio-astro-v1/sitemap-index.xml
