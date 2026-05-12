@@ -10,7 +10,7 @@ export const fallbackProfile: Profile = {
   avatar_url: '',
   cv_url: '',
   social_links: [
-    { platform: 'GitHub', url: 'https://github.com/dreayacucho' },
+    { platform: 'GitHub', url: 'https://github.com/urufudev' },
     { platform: 'LinkedIn', url: '#' },
   ],
 };

@@ -30,14 +30,17 @@ const pageTitle = title ? `${title} · ${profile.name}` : profile.name;
     </a>
 
     <div class="flex flex-col lg:flex-row min-h-screen">
+      {/* Sidebar with structural right border */}
       <Navigation profile={profile} />
 
-      <main id="main" class="flex-1 min-w-0">
+      {/* Main content with top structural line on mobile */}
+      <main id="main" class="flex-1 min-w-0 relative">
+        {/* Horizontal structural line - visible only on mobile below nav */}
+        <div class="lg:hidden h-px bg-border" aria-hidden="true"></div>
+
         <slot />
         <Footer profile={profile} />
       </main>
     </div>
-
-
   </body>
 </html>

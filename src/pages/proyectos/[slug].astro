@@ -24,7 +24,6 @@ const nextProject = currentIndex < projects.length - 1 ? projects[currentIndex +
 
 const base = import.meta.env.BASE_URL;
 
-// Group technologies by category
 const techByCategory = project.technologies.reduce<Record<string, typeof project.technologies>>((acc, tech) => {
   if (!acc[tech.category_label]) acc[tech.category_label] = [];
   acc[tech.category_label].push(tech);
@@ -37,8 +36,16 @@ const descriptionHtml = project.long_description ? marked.parse(project.long_des
 <Layout title={project.title}>
   <article class="pt-12 lg:pt-16 pb-8">
     <div class="container-main">
+      {/* Breadcrumb / back */}
+      <div class="mb-8">
+        <a href={`${base}/proyectos`} class="inline-flex items-center gap-2 text-[13px] text-secondary hover:text-accent transition-colors duration-150 btn-tactile" style="font-family: var(--font-mono)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+          Proyectos
+        </a>
+      </div>
+
       {/* Featured image */}
-      <div class="aspect-video bg-surface rounded-lg overflow-hidden mb-8">
+      <div class="aspect-video bg-surface border border-border overflow-hidden mb-10">
         {project.featured_image_url ? (
           <img
             src={project.featured_image_url}
@@ -56,31 +63,36 @@ const descriptionHtml = project.long_description ? marked.parse(project.long_des
       </div>
 
       {/* Title & meta */}
-      <h1 class="text-[28px] lg:text-[36px] font-medium tracking-tight text-text">{project.title}</h1>
+      <div class="mb-10">
+        <div class="section-marker mb-4">
+          <span>Proyecto</span>
+        </div>
+        <h1 class="text-[28px] lg:text-[40px] font-medium tracking-tighter leading-[1.1] text-text">{project.title}</h1>
 
-      {project.realized_at && (
-        <p class="mt-2 text-[13px] text-secondary" style="font-family: var(--font-mono)">
-          {new Date(project.realized_at).toLocaleDateString('es-PE', { year: 'numeric', month: 'long' })}
-        </p>
-      )}
+        {project.realized_at && (
+          <p class="mt-3 text-[13px] text-secondary font-variant-numeric-tabular" style="font-family: var(--font-mono)">
+            {new Date(project.realized_at).toLocaleDateString('es-PE', { year: 'numeric', month: 'long' })}
+          </p>
+        )}
+      </div>
 
       {/* Description */}
       {descriptionHtml && (
-        <div class="mt-8 prose prose-neutral max-w-none">
-          <div set:html={descriptionHtml} class="text-[16px] leading-[1.7] text-text max-w-[65ch] [&>p]:mb-4 [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:mb-4 [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:mb-4 [&>h2]:text-[20px] [&>h2]:font-medium [&>h2]:mt-8 [&>h2]:mb-3 [&>h3]:text-[17px] [&>h3]:font-medium [&>h3]:mt-6 [&>h3]:mb-2 [&>a]:text-accent [&>a]:underline [&>a]:underline-offset-2 [&>blockquote]:border-l-2 [&>blockquote]:border-border [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-secondary" />
+        <div class="border-t border-border pt-10">
+          <div set:html={descriptionHtml} class="text-[16px] leading-[1.7] text-text max-w-[65ch] [&>p]:mb-4 [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:mb-4 [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:mb-4 [&>h2]:text-[20px] [&>h2]:font-medium [&>h2]:mt-10 [&>h2]:mb-4 [&>h2]:pt-6 [&>h2]:border-t [&>h2]:border-border [&>h3]:text-[17px] [&>h3]:font-medium [&>h3]:mt-8 [&>h3]:mb-3 [&>a]:text-accent [&>a]:underline [&>a]:underline-offset-2 [&>blockquote]:border-l-2 [&>blockquote]:border-border [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-secondary" />
         </div>
       )}
 
       {/* Links */}
-      <div class="mt-8 flex flex-wrap items-center gap-5">
+      <div class="mt-10 pt-8 border-t border-border flex flex-wrap items-center gap-6">
         {project.demo_url && (
-          <a href={project.demo_url} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[15px] text-accent hover:text-accent-hover transition-colors duration-150 group">
+          <a href={project.demo_url} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[15px] text-accent hover:text-accent-hover transition-colors duration-150 group btn-tactile">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
             Demo en vivo
           </a>
         )}
         {project.repo_url && (
-          <a href={project.repo_url} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[15px] text-accent hover:text-accent-hover transition-colors duration-150 group">
+          <a href={project.repo_url} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[15px] text-secondary hover:text-accent transition-colors duration-150 group btn-tactile">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
             Repositorio
           </a>
@@ -89,15 +101,17 @@ const descriptionHtml = project.long_description ? marked.parse(project.long_des
 
       {/* Technologies */}
       {Object.keys(techByCategory).length > 0 && (
-        <div class="mt-10">
-          <h2 class="text-[13px] uppercase tracking-widest text-secondary mb-4" style="font-family: var(--font-mono)">Stack</h2>
-          <div class="space-y-4">
+        <div class="mt-10 pt-8 border-t border-border">
+          <div class="section-marker mb-6">
+            <span>Stack</span>
+          </div>
+          <div class="space-y-5">
             {Object.entries(techByCategory).map(([category, techs]) => (
               <div>
-                <span class="text-[12px] text-secondary mb-2 block" style="font-family: var(--font-mono)">{category}</span>
+                <span class="text-[11px] text-secondary mb-3 block uppercase tracking-wider" style="font-family: var(--font-mono)">{category}</span>
                 <div class="flex flex-wrap gap-2">
                   {techs.map((tech) => (
-                    <span class="inline-flex items-center px-2.5 py-1 text-[12px] bg-surface text-text rounded border border-border" style="font-family: var(--font-mono)">
+                    <span class="inline-flex items-center px-2.5 py-[5px] text-[12px] bg-surface text-text border border-border/60 rounded-sm" style="font-family: var(--font-mono)">
                       {tech.name}
                     </span>
                   ))}
@@ -110,13 +124,15 @@ const descriptionHtml = project.long_description ? marked.parse(project.long_des
 
       {/* Gallery */}
       {project.gallery.length > 0 && (
-        <div class="mt-10" x-data="{ open: false, activeImage: null, activeName: '' }">
-          <h2 class="text-[13px] uppercase tracking-widest text-secondary mb-4" style="font-family: var(--font-mono)">Galería</h2>
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <div class="mt-10 pt-8 border-t border-border" x-data="{ open: false, activeImage: null, activeName: '' }">
+          <div class="section-marker mb-6">
+            <span>Galería</span>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-px bg-border border border-border">
             {project.gallery.map((img) => (
               <button
                 type="button"
-                class="aspect-[4/3] bg-surface rounded-md overflow-hidden cursor-pointer border border-border hover:border-accent transition-colors duration-150"
+                class="aspect-[4/3] bg-surface overflow-hidden cursor-pointer hover:opacity-90 transition-opacity duration-150"
                 @click={`open = true; activeImage = '${img.url}'; activeName = '${img.name}'`}
                 aria-label={`Ver imagen ${img.name}`}
               >
@@ -148,7 +164,7 @@ const descriptionHtml = project.long_description ? marked.parse(project.long_des
             <div class="flex flex-col items-center justify-center h-full">
               <button
                 type="button"
-                class="absolute top-4 right-4 text-white/80 hover:text-white p-2"
+                class="absolute top-4 right-4 text-white/80 hover:text-white p-2 btn-tactile"
                 @click="open = false"
                 aria-label="Cerrar"
               >
@@ -157,7 +173,7 @@ const descriptionHtml = project.long_description ? marked.parse(project.long_des
               <img
                 :src="activeImage"
                 :alt="activeName"
-                class="max-w-full max-h-[85vh] object-contain rounded"
+                class="max-w-full max-h-[85vh] object-contain"
               />
               <p class="mt-3 text-[13px] text-white/70" style="font-family: var(--font-mono)" x-text="activeName"></p>
             </div>
@@ -173,7 +189,7 @@ const descriptionHtml = project.long_description ? marked.parse(project.long_des
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-150 group-hover:-translate-x-0.5" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
               Anterior
             </span>
-            <span class="text-text group-hover:text-accent transition-colors duration-150">{prevProject.title}</span>
+            <span class="text-text group-hover:text-accent transition-colors duration-150 max-w-[200px] truncate block">{prevProject.title}</span>
           </a>
         ) : (
           <div />
@@ -185,7 +201,7 @@ const descriptionHtml = project.long_description ? marked.parse(project.long_des
               Siguiente
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-150 group-hover:translate-x-0.5" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
             </span>
-            <span class="text-text group-hover:text-accent transition-colors duration-150">{nextProject.title}</span>
+            <span class="text-text group-hover:text-accent transition-colors duration-150 max-w-[200px] truncate block">{nextProject.title}</span>
           </a>
         ) : (
           <div />

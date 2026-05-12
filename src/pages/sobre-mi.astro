@@ -14,50 +14,65 @@ const base = import.meta.env.BASE_URL;
 <Layout title="Sobre mí">
   <section class="pt-12 lg:pt-16 pb-6">
     <div class="container-main">
-      <h1 class="text-[28px] lg:text-[40px] font-medium tracking-tight text-text">Sobre mí</h1>
+      <div class="section-marker mb-4">
+        <span>Perfil</span>
+      </div>
+      <h1 class="text-[32px] lg:text-[44px] font-medium tracking-tighter leading-[1.1] text-text">Sobre mí</h1>
       {profile.bio && (
-        <p class="mt-4 text-[16px] leading-[1.7] text-text max-w-[65ch]">{profile.bio}</p>
+        <p class="mt-6 text-[16px] leading-[1.7] text-text/80 max-w-[65ch]">{profile.bio}</p>
       )}
     </div>
   </section>
 
   {/* Experience Timeline */}
-  <section class="py-12">
+  <section class="py-16 lg:py-20 border-t border-border">
     <div class="container-main">
-      <h2 class="text-[22px] lg:text-[26px] font-medium text-text mb-8">Experiencia laboral</h2>
+      <div class="section-marker mb-10">
+        <span>Experiencia</span>
+      </div>
 
-      <div class="relative pl-6">
-        <div class="absolute left-[7px] top-2 bottom-2 w-px bg-border"></div>
+      <div class="relative">
+        {/* Vertical structural line */}
+        <div class="absolute left-0 top-2 bottom-2 w-px bg-border lg:left-[140px]" aria-hidden="true"></div>
 
-        <div class="space-y-10">
+        <div class="space-y-0 divide-y divide-border">
           {experiences.map((exp) => (
-            <div class="relative">
-              <div class={`absolute -left-[25px] top-1.5 w-2 h-2 rounded-full border ${exp.is_current ? 'border-accent bg-accent' : 'border-border bg-bg'}`}></div>
+            <div class="relative pl-6 lg:pl-[164px] py-8 first:pt-0 last:pb-0">
+              {/* Timeline dot */}
+              <div class={`absolute left-[-3px] top-10 w-[7px] h-[7px] rounded-full border ${exp.is_current ? 'border-accent bg-accent' : 'border-border bg-bg'} lg:left-[137px]`}></div>
 
-              <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
-                <h3 class="text-[17px] font-medium text-text">{exp.position}</h3>
-                <span class="text-[12px] text-secondary shrink-0" style="font-family: var(--font-mono)">
+              {/* Date - left side on desktop */}
+              <div class="lg:absolute lg:left-0 lg:top-8 lg:w-[120px]">
+                <span class="text-[12px] text-secondary font-variant-numeric-tabular" style="font-family: var(--font-mono)">
                   {formatPeriod(exp.started_at, exp.ended_at, exp.is_current)}
                 </span>
               </div>
 
-              <p class="mt-1 text-[15px] text-secondary">{exp.company}</p>
-
-              {exp.is_current && (
-                <span class="mt-2 inline-block text-[10px] uppercase tracking-wider text-accent border border-accent/30 px-2 py-0.5 rounded-full">
-                  Actual
-                </span>
-              )}
-
-              {exp.description && (
-                <details class="mt-3 group">
-                  <summary class="text-[13px] text-secondary hover:text-text cursor-pointer list-none inline-flex items-center gap-1 transition-colors duration-150">
-                    <span>Ver más</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-150 group-open:rotate-180" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
-                  </summary>
-                  <p class="mt-2 text-[15px] text-secondary leading-relaxed max-w-[65ch]">{exp.description}</p>
-                </details>
-              )}
+              <div class="mt-2 lg:mt-0">
+                <div class="flex flex-wrap items-center gap-3">
+                  <h3 class="text-[17px] font-medium text-text">{exp.position}</h3>
+                  {exp.is_current && (
+                    <span class="text-[10px] uppercase tracking-wider text-accent border border-accent/20 px-2 py-0.5 rounded-full">
+                      Actual
+                    </span>
+                  )}
+                </div>
+                <p class="mt-1 text-[15px] text-secondary">{exp.company}</p>
+                {exp.work_type_label && (
+                  <span class="mt-2 inline-block text-[11px] text-secondary/70" style="font-family: var(--font-mono)">
+                    {exp.work_type_label}
+                  </span>
+                )}
+                {exp.description && (
+                  <details class="mt-4 group">
+                    <summary class="text-[13px] text-secondary hover:text-text cursor-pointer list-none inline-flex items-center gap-1 transition-colors duration-150 btn-tactile">
+                      <span style="font-family: var(--font-mono)">[+]</span>
+                      <span>Detalles</span>
+                    </summary>
+                    <p class="mt-3 text-[15px] text-secondary leading-relaxed max-w-[65ch] pl-6 border-l border-border">{exp.description}</p>
+                  </details>
+                )}
+              </div>
             </div>
           ))}
         </div>
@@ -65,60 +80,60 @@ const base = import.meta.env.BASE_URL;
     </div>
   </section>
 
-  {/* Education Timeline */}
-  <section class="py-12">
+  {/* Education */}
+  <section class="py-16 lg:py-20 border-t border-border">
     <div class="container-main">
-      <h2 class="text-[22px] lg:text-[26px] font-medium text-text mb-8">Educación</h2>
+      <div class="section-marker mb-10">
+        <span>Formación</span>
+      </div>
 
-      <div class="relative pl-6">
-        <div class="absolute left-[7px] top-2 bottom-2 w-px bg-border"></div>
-
-        <div class="space-y-10">
-          {education.map((edu) => (
-            <div class="relative">
-              <div class="absolute -left-[25px] top-1.5 w-2 h-2 rounded-full border border-border bg-bg"></div>
-
-              <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
-                <h3 class="text-[17px] font-medium text-text">{edu.degree}</h3>
-                <span class="text-[12px] text-secondary shrink-0" style="font-family: var(--font-mono)">
-                  {formatPeriod(edu.started_at, edu.ended_at, !edu.ended_at)}
-                </span>
-              </div>
-
-              <p class="mt-1 text-[15px] text-secondary">{edu.institution}</p>
-
-              {edu.certificate_url && (
-                <a href={edu.certificate_url} target="_blank" rel="noopener noreferrer" class="mt-2 inline-flex items-center gap-1.5 text-[13px] text-accent hover:text-accent-hover transition-colors duration-150">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>
-                  Ver certificado
-                </a>
-              )}
+      <div class="space-y-0 divide-y divide-border">
+        {education.map((edu) => (
+          <div class="py-8 first:pt-0 last:pb-0">
+            <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2">
+              <h3 class="text-[17px] font-medium text-text">{edu.degree}</h3>
+              <span class="text-[12px] text-secondary font-variant-numeric-tabular shrink-0" style="font-family: var(--font-mono)">
+                {formatPeriod(edu.started_at, edu.ended_at, !edu.ended_at)}
+              </span>
             </div>
-          ))}
-        </div>
+            <p class="mt-1 text-[15px] text-secondary">{edu.institution}</p>
+            {edu.certificate_url && (
+              <a href={edu.certificate_url} target="_blank" rel="noopener noreferrer" class="mt-3 inline-flex items-center gap-1.5 text-[13px] text-accent hover:text-accent-hover transition-colors duration-150 btn-tactile">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>
+                Certificado
+              </a>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   </section>
 
   {/* Technologies with level bars */}
-  <section class="py-12">
+  <section class="py-16 lg:py-20 border-t border-border">
     <div class="container-main">
-      <h2 class="text-[22px] lg:text-[26px] font-medium text-text mb-8">Tecnologías</h2>
+      <div class="section-marker mb-10">
+        <span>Habilidades</span>
+      </div>
 
-      <div class="space-y-10">
+      <div class="space-y-12">
         {techGroups.map((group) => (
           <div>
-            <h3 class="text-[12px] uppercase tracking-[0.08em] text-secondary mb-5" style="font-family: var(--font-mono)">{group.label}</h3>
+            <h3 class="text-[12px] uppercase tracking-[0.08em] text-secondary mb-6 flex items-center gap-3" style="font-family: var(--font-mono)">
+              <span class="w-4 h-px bg-border"></span>
+              {group.label}
+            </h3>
 
-            <div class="space-y-4">
+            <div class="space-y-5">
               {group.technologies.map((tech) => {
                 const opacity = tech.level > 70 ? 1 : tech.level > 40 ? 0.7 : 0.4;
                 return (
                   <div class="tech-bar" data-level={tech.level} data-opacity={opacity}>
-                    <div class="flex items-center justify-between mb-1.5">
+                    <div class="flex items-center justify-between mb-2">
                       <span class="text-[15px] text-text">{tech.name}</span>
+                      <span class="text-[11px] text-secondary" style="font-family: var(--font-mono)">{tech.level}%</span>
                     </div>
-                    <div class="h-1 bg-border rounded-sm overflow-hidden">
+                    <div class="h-[3px] bg-border rounded-sm overflow-hidden">
                       <div
                         class="tech-bar-fill h-full bg-accent rounded-sm transition-all duration-600 ease-out"
                         style={`width: 0%; opacity: ${opacity};`}
@@ -135,40 +150,63 @@ const base = import.meta.env.BASE_URL;
   </section>
 
   {/* Contact info */}
-  <section class="py-12">
+  <section class="py-16 lg:py-20 border-t border-border">
     <div class="container-main">
-      <h2 class="text-[22px] lg:text-[26px] font-medium text-text mb-6">Contacto</h2>
-
-      <div class="space-y-3 text-[15px]">
-        <p>
-          <span class="text-secondary">Email:</span>{' '}
-          <a href={`mailto:${profile.email}`} class="text-text hover:text-accent transition-colors duration-150 underline underline-offset-2">{profile.email}</a>
-        </p>
-        {profile.phone && (
-          <p>
-            <span class="text-secondary">Teléfono:</span>{' '}
-            <a href={`tel:${profile.phone}`} class="text-text hover:text-accent transition-colors duration-150">{profile.phone}</a>
-          </p>
-        )}
-        {profile.location && (
-          <p>
-            <span class="text-secondary">Ubicación:</span>{' '}
-            <span class="text-text">{profile.location}</span>
-          </p>
-        )}
+      <div class="section-marker mb-8">
+        <span>Contacto</span>
       </div>
 
-      {profile.cv_url && (
-        <a href={profile.cv_url} target="_blank" rel="noopener noreferrer" class="mt-6 inline-flex items-center gap-2 text-[15px] text-accent hover:text-accent-hover transition-colors duration-150 group">
-          Descargar CV completo
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-150 group-hover:translate-y-0.5" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-        </a>
-      )}
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+        <div class="space-y-4">
+          <div class="flex items-center gap-4 py-3 border-b border-border">
+            <span class="text-[12px] text-secondary w-20 shrink-0" style="font-family: var(--font-mono)">Email</span>
+            <a href={`mailto:${profile.email}`} class="text-[15px] text-text hover:text-accent transition-colors duration-150 btn-tactile">
+              {profile.email}
+            </a>
+          </div>
+          {profile.phone && (
+            <div class="flex items-center gap-4 py-3 border-b border-border">
+              <span class="text-[12px] text-secondary w-20 shrink-0" style="font-family: var(--font-mono)">Tel</span>
+              <a href={`tel:${profile.phone}`} class="text-[15px] text-text hover:text-accent transition-colors duration-150 btn-tactile">
+                {profile.phone}
+              </a>
+            </div>
+          )}
+          {profile.location && (
+            <div class="flex items-center gap-4 py-3 border-b border-border">
+              <span class="text-[12px] text-secondary w-20 shrink-0" style="font-family: var(--font-mono)">Ubicación</span>
+              <span class="text-[15px] text-text">{profile.location}</span>
+            </div>
+          )}
+        </div>
+
+        <div class="flex flex-col justify-between">
+          <div class="space-y-3">
+            {profile.social_links.map((link) => (
+              <a
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center justify-between py-3 border-b border-border text-[15px] text-text hover:text-accent transition-colors duration-150 btn-tactile group"
+              >
+                <span>{link.platform}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-secondary group-hover:text-accent transition-colors duration-150" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+              </a>
+            ))}
+          </div>
+
+          {profile.cv_url && (
+            <a href={profile.cv_url} target="_blank" rel="noopener noreferrer" class="mt-6 inline-flex items-center gap-2 text-[15px] text-accent hover:text-accent-hover transition-colors duration-150 group btn-tactile">
+              Descargar CV completo
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-150 group-hover:translate-y-0.5" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            </a>
+          )}
+        </div>
+      </div>
     </div>
   </section>
 
   <script>
-    // Animate tech bars on scroll
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {

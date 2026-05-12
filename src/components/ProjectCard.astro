@@ -12,8 +12,8 @@ const displayTech = project.technologies.slice(0, 3);
 const extraTechCount = project.technologies.length - 3;
 ---
 
-<article class="group border border-border rounded-lg overflow-hidden transition-colors duration-150 ease hover:border-accent bg-bg">
-  <a href={`${base}/proyectos/${project.slug}`} class="block">
+<article class="group h-full">
+  <a href={`${base}/proyectos/${project.slug}`} class="block h-full">
     <div class="aspect-video bg-surface overflow-hidden relative">
       {project.featured_image_url ? (
         <img
@@ -31,25 +31,25 @@ const extraTechCount = project.technologies.length - 3;
       )}
     </div>
 
-    <div class="p-5">
-      <h3 class="text-[17px] font-medium text-text leading-snug group-hover:text-accent transition-colors duration-150">
+    <div class="p-5 border-t border-border group-hover:border-accent/40 transition-colors duration-150">
+      <h3 class="text-[16px] font-medium text-text leading-snug group-hover:text-accent transition-colors duration-150">
         {project.title}
       </h3>
 
       {project.short_description && (
-        <p class="mt-2 text-[15px] text-secondary leading-relaxed line-clamp-2">
+        <p class="mt-2 text-[14px] text-secondary leading-relaxed line-clamp-2">
           {project.short_description}
         </p>
       )}
 
       <div class="mt-4 flex flex-wrap items-center gap-2" style="font-family: var(--font-mono)">
         {displayTech.map((tech) => (
-          <span class="inline-flex items-center px-2 py-0.5 text-[11px] bg-surface text-text rounded">
+          <span class="inline-flex items-center px-2 py-[3px] text-[11px] bg-surface text-text/70 border border-border/60 rounded-sm">
             {tech.name}
           </span>
         ))}
         {extraTechCount > 0 && (
-          <span class="text-[11px] text-secondary">+{extraTechCount} más</span>
+          <span class="text-[11px] text-secondary">+{extraTechCount}</span>
         )}
       </div>
     </div>
