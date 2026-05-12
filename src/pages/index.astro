@@ -53,20 +53,45 @@ const base = '';
           </div>
         </div>
 
-        {/* Right side - social links with vertical line */}
-        <div class="hidden lg:flex flex-col items-start gap-4 pl-8 border-l border-border">
-          <span class="text-[10px] uppercase tracking-widest text-secondary/60 mb-2" style="font-family: var(--font-mono)">Conectar</span>
-          {profile.social_links.map((link) => (
-            <a
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-[13px] text-secondary hover:text-accent transition-colors duration-150 btn-tactile"
-              style="font-family: var(--font-mono)"
-            >
-              {link.platform}
-            </a>
-          ))}
+        {/* Right side - avatar card + social links */}
+        <div class="hidden lg:flex flex-col items-start gap-6 pl-8 border-l border-border">
+          {/* Avatar card with terminal-like aesthetic */}
+          {profile.avatar_url && (
+            <div class="overflow-hidden rounded-lg bg-surface p-3 ring-1 ring-border/10 w-full max-w-[200px]">
+              <div class="flex items-center justify-between gap-4 rounded-sm p-2 bg-bg ring-1 ring-border/10 mb-3">
+                <div class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-secondary" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  <span class="text-[11px] text-secondary" style="font-family: var(--font-mono)">avatar.png</span>
+                </div>
+              </div>
+              <div class="overflow-hidden rounded-sm ring-1 ring-border/10">
+                <img
+                  src={profile.avatar_url}
+                  alt={profile.name}
+                  class="w-full aspect-square object-cover"
+                  width="200"
+                  height="200"
+                  loading="eager"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Social links */}
+          <div class="flex flex-col items-start gap-3">
+            <span class="text-[10px] uppercase tracking-widest text-secondary/60" style="font-family: var(--font-mono)">Conectar</span>
+            {profile.social_links.map((link) => (
+              <a
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-[13px] text-secondary hover:text-accent transition-colors duration-150 btn-tactile"
+                style="font-family: var(--font-mono)"
+              >
+                {link.platform}
+              </a>
+            ))}
+          </div>
         </div>
       </div>
     </div>
