@@ -1,5 +1,6 @@
 ---
 import type { Project } from '../lib/types';
+import { Image } from 'astro:assets';
 
 interface Props {
   project: Project;
@@ -16,13 +17,12 @@ const extraTechCount = project.technologies.length - 3;
   <a href={`${base}/proyectos/${project.slug}`} class="block h-full">
     <div class="aspect-video bg-surface overflow-hidden relative">
       {project.featured_image_url ? (
-        <img
+        <Image
           src={project.featured_image_url}
           alt={`Captura de ${project.title}`}
-          loading="lazy"
           class="w-full h-full object-cover transition-transform duration-300 ease group-hover:scale-[1.02]"
-          width="780"
-          height="439"
+          width={780}
+          height={439}
         />
       ) : (
         <div class="w-full h-full flex items-center justify-center" style="font-family: var(--font-mono)">

@@ -7,6 +7,9 @@ export default defineConfig({
   site: 'https://urufudev.github.io',
   output: 'static',
   integrations: [alpinejs(), sitemap()],
+  image: {
+    domains: ['cv.dreayacucho.gob.pe'],
+  },
   vite: {
     plugins: [tailwindcss()],
   },

@@ -15,7 +15,7 @@ const base = '';
 const bioHtml = profile.bio ? marked.parse(profile.bio, { async: false }) as string : '';
 ---
 
-<Layout title="Sobre mí">
+<Layout title="Sobre mí" image={profile.avatar_url}>
   <section class="pt-12 lg:pt-16 pb-6">
     <div class="container-main">
       <div class="section-marker mb-4">

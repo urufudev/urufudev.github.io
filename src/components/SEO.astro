@@ -1,0 +1,64 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  canonicalURL?: URL | string;
+  type?: 'website' | 'article';
+  publishDate?: string;
+}
+
+const {
+  title,
+  description,
+  image = new URL('/default-og.png', Astro.site).href,
+  canonicalURL = new URL(Astro.url.pathname, Astro.site),
+  type = 'website',
+  publishDate,
+} = Astro.props;
+
+// Determine JSON-LD Schema based on type
+const schema = type === 'article' 
+  ? {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": title,
+      "description": description,
+      "image": image,
+      ...(publishDate ? { "datePublished": publishDate } : {}),
+      "url": canonicalURL,
+    }
+  : {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": title,
+      "description": description,
+      "url": canonicalURL,
+    };
+---
+
+{/* Basic Meta Tags */}
+<title>{title}</title>
+<meta name="title" content={title} />
+<meta name="description" content={description} />
+<meta name="robots" content="index, follow" />
+
+{/* Canonical URL */}
+<link rel="canonical" href={canonicalURL} />
+
+{/* Open Graph / Facebook */}
+<meta property="og:type" content={type} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={image} />
+
+{/* Twitter */}
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content={canonicalURL} />
+<meta property="twitter:title" content={title} />
+<meta property="twitter:description" content={description} />
+<meta property="twitter:image" content={image} />
+
+{/* JSON-LD Schema */}
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

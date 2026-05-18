@@ -3,14 +3,24 @@ import '../styles/global.css';
 import { getProfile } from '../lib/api';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
+import SEO from '../components/SEO.astro';
 
 interface Props {
   title?: string;
   description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  publishDate?: string;
 }
 
 const profile = await getProfile();
-const { title, description = profile.bio ?? profile.professional_title } = Astro.props;
+const { 
+  title, 
+  description = profile.bio ?? profile.professional_title,
+  image,
+  type = 'website',
+  publishDate
+} = Astro.props;
 const pageTitle = title ? `${title} · ${profile.name}` : profile.name;
 ---
 
@@ -19,9 +29,15 @@ const pageTitle = title ? `${title} · ${profile.name}` : profile.name;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{pageTitle}</title>
-    <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    
+    <SEO 
+      title={pageTitle} 
+      description={description} 
+      image={image}
+      type={type}
+      publishDate={publishDate}
+    />
     <slot name="head" />
 
     {/* Theme script - runs before render to prevent flash */}

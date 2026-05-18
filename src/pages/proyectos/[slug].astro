@@ -1,5 +1,6 @@
 ---
 import { marked } from 'marked';
+import { Image } from 'astro:assets';
 import Layout from '../../layouts/Layout.astro';
 import { getProjects, getProject } from '../../lib/api';
 
@@ -33,7 +34,13 @@ const techByCategory = project.technologies.reduce<Record<string, typeof project
 const descriptionHtml = project.long_description ? marked.parse(project.long_description, { async: false }) as string : '';
 ---
 
-<Layout title={project.title}>
+<Layout 
+  title={project.title}
+  description={project.short_description || undefined}
+  image={project.featured_image_url}
+  type="article"
+  publishDate={project.realized_at || undefined}
+>
   <article class="pt-12 lg:pt-16 pb-8">
     <div class="container-main">
       {/* Breadcrumb / back */}
@@ -47,12 +54,13 @@ const descriptionHtml = project.long_description ? marked.parse(project.long_des
       {/* Featured image */}
       <div class="aspect-video bg-surface border border-border overflow-hidden mb-10">
         {project.featured_image_url ? (
-          <img
+          <Image
             src={project.featured_image_url}
             alt={project.title}
             class="w-full h-full object-cover"
-            width="780"
-            height="439"
+            width={780}
+            height={439}
+            loading="eager"
             fetchpriority="high"
           />
         ) : (
@@ -156,13 +164,13 @@ const descriptionHtml = project.long_description ? marked.parse(project.long_des
                 @click={`go(${idx})`}
                 aria-label={`Ver imagen ${img.name}`}
               >
-                <img
+                <Image
                   src={img.thumb_url || img.url}
                   alt={img.name}
-                  loading="lazy"
                   class="w-full h-full object-cover"
-                  width="400"
-                  height="300"
+                  width={400}
+                  height={300}
+                  onerror={`this.onerror=null; this.src='${img.url}';`}
                 />
               </button>
             ))}
