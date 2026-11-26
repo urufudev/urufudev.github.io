@@ -31,7 +31,10 @@ const techByCategory = project.technologies.reduce<Record<string, typeof project
 }, {});
 
 const descriptionHtml = project.long_description
-  ? (marked.parse(project.long_description, { async: false }) as string)
+  ? (marked.parse(project.long_description, { async: false, gfm: true, breaks: true }) as string).replace(
+      /<table([\s\S]*?)<\/table>/g,
+      '<div class="md-table-wrap"><table$1</table></div>'
+    )
   : '';
 ---
 

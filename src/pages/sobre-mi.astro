@@ -10,7 +10,13 @@ const experiences = await getExperiences();
 const education = await getEducation();
 const techGroups = await getTechnologies();
 
-const bioHtml = profile.bio ? (marked.parse(profile.bio, { async: false }) as string) : '';
+function renderMarkdown(md: string | null): string {
+  if (!md) return '';
+  const html = marked.parse(md, { async: false, gfm: true, breaks: true }) as string;
+  return html.replace(/<table([\s\S]*?)<\/table>/g, '<div class="md-table-wrap"><table$1</table></div>');
+}
+
+const bioHtml = renderMarkdown(profile.bio);
 
 function formatTechLevel(level: number) {
   const isFiveScale = level <= 5;
@@ -51,7 +57,7 @@ function formatTechLevel(level: number) {
 
     <div class="divide-y divide-border">
       {experiences.map((exp) => {
-        const descHtml = exp.description ? (marked.parse(exp.description, { async: false }) as string) : '';
+        const descHtml = renderMarkdown(exp.description);
         return (
           <div class="grid grid-cols-1 md:grid-cols-12">
             <div class="md:col-span-4 lg:col-span-3 grid-inner pt-8 pb-2 md:py-8 flex flex-row md:flex-col items-center md:items-start justify-between md:justify-start gap-2">
@@ -106,7 +112,7 @@ function formatTechLevel(level: number) {
 
     <div class="divide-y divide-border">
       {education.map((edu) => {
-        const descHtml = edu.description ? (marked.parse(edu.description, { async: false }) as string) : '';
+        const descHtml = renderMarkdown(edu.description);
         return (
           <div class="grid grid-cols-1 md:grid-cols-12">
             <div class="md:col-span-4 lg:col-span-3 grid-inner pt-8 pb-2 md:py-8">
