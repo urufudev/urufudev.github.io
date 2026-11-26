@@ -1,7 +1,7 @@
 import type { Profile, Project, Experience, Education, TechnologyGroup } from './types';
 
 export const fallbackProfile: Profile = {
-  name: 'Yeferson Huaranca',
+  name: 'Yimy David Huamancusi Campos',
   professional_title: 'Desarrollador Full Stack',
   bio: 'Probablemente estoy depurando algo en este momento.',
   email: 'contacto@ejemplo.com',

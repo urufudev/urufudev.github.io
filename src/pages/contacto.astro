@@ -1,43 +1,83 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import GridBand from '../components/GridBand.astro';
 import { getProfile } from '../lib/api';
 
 const profile = await getProfile();
 ---
 
 <Layout title="Contacto">
-  <section class="pt-12 lg:pt-16 pb-6">
-    <div class="container-main">
+  <GridBand as="section">
+    <div class="grid-inner py-12 lg:py-16">
       <div class="section-marker mb-4">
         <span>Escríbeme</span>
       </div>
-      <h1 class="text-[32px] lg:text-[44px] font-medium tracking-tighter leading-[1.1] text-text">Contacto</h1>
-      <p class="mt-6 text-[16px] leading-[1.7] text-text/80 max-w-[65ch]">
+      <h1 class="text-[34px] sm:text-[42px] lg:text-[48px] font-semibold tracking-tighter leading-[1.08] text-text">
+        Contacto
+      </h1>
+      <p class="mt-4 text-[16px] sm:text-[17px] leading-[1.7] text-secondary max-w-[62ch]">
         Si tienes una pregunta, una idea o simplemente quieres hablar de código, escríbeme. Respondo en cuanto puedo.
       </p>
     </div>
-  </section>
+  </GridBand>
 
-  <section class="py-6 pb-20">
-    <div class="container-main max-w-[640px]">
-      {/* Structural border container */}
-      <div class="border border-border rounded-sm p-6 lg:p-10 relative">
-        {/* Corner markers */}
-        <span class="absolute -top-[3px] -left-[3px] w-[7px] h-[7px] text-border select-none pointer-events-none flex items-center justify-center" aria-hidden="true">
-          <svg width="7" height="7" viewBox="0 0 7 7" fill="none"><path d="M3.5 0v7M0 3.5h7" stroke="currentColor" stroke-width="0.75"/></svg>
-        </span>
-        <span class="absolute -top-[3px] -right-[3px] w-[7px] h-[7px] text-border select-none pointer-events-none flex items-center justify-center" aria-hidden="true">
-          <svg width="7" height="7" viewBox="0 0 7 7" fill="none"><path d="M3.5 0v7M0 3.5h7" stroke="currentColor" stroke-width="0.75"/></svg>
-        </span>
-        <span class="absolute -bottom-[3px] -left-[3px] w-[7px] h-[7px] text-border select-none pointer-events-none flex items-center justify-center" aria-hidden="true">
-          <svg width="7" height="7" viewBox="0 0 7 7" fill="none"><path d="M3.5 0v7M0 3.5h7" stroke="currentColor" stroke-width="0.75"/></svg>
-        </span>
-        <span class="absolute -bottom-[3px] -right-[3px] w-[7px] h-[7px] text-border select-none pointer-events-none flex items-center justify-center" aria-hidden="true">
-          <svg width="7" height="7" viewBox="0 0 7 7" fill="none"><path d="M3.5 0v7M0 3.5h7" stroke="currentColor" stroke-width="0.75"/></svg>
-        </span>
+  <GridBand as="section">
+    <div class="grid grid-cols-1 lg:grid-cols-12 lg:divide-x lg:divide-border">
+      {/* Columna izquierda: información directa */}
+      <div class="lg:col-span-5 grid-inner py-10 lg:py-14 border-b lg:border-b-0 border-border flex flex-col justify-between gap-8">
+        <div>
+          <h2 class="text-[18px] font-semibold text-text">Canales directos</h2>
+          <p class="mt-2 text-[15px] text-secondary leading-relaxed">
+            ¿Prefieres algo más directo? Puedes escribirme al correo o conectar por mis redes.
+          </p>
 
+          <dl class="mt-6 divide-y divide-border border-y border-border">
+            <div class="py-3.5 flex flex-col gap-1">
+              <dt class="text-[12px] font-mono uppercase tracking-[0.08em] text-secondary">Email</dt>
+              <dd>
+                <a
+                  href={`mailto:${profile.email}`}
+                  class="text-[15px] text-accent hover:text-accent-hover transition-colors duration-150 underline underline-offset-4 break-all"
+                >
+                  {profile.email}
+                </a>
+              </dd>
+            </div>
+
+            {profile.location && (
+              <div class="py-3.5 flex flex-col gap-1">
+                <dt class="text-[12px] font-mono uppercase tracking-[0.08em] text-secondary">Ubicación</dt>
+                <dd class="text-[15px] text-text">{profile.location}</dd>
+              </div>
+            )}
+
+            {profile.social_links.length > 0 && (
+              <div class="py-3.5 flex flex-col gap-2">
+                <dt class="text-[12px] font-mono uppercase tracking-[0.08em] text-secondary">Redes</dt>
+                <dd class="flex flex-wrap gap-x-5 gap-y-2">
+                  {profile.social_links.map((link) => (
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center gap-1 text-[14px] font-mono text-text hover:text-accent transition-colors duration-150 underline-offset-4 hover:underline"
+                    >
+                      <span>{link.platform}</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="text-secondary" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+                    </a>
+                  ))}
+                </dd>
+              </div>
+            )}
+          </dl>
+        </div>
+      </div>
+
+      {/* Columna derecha: formulario */}
+      <div class="lg:col-span-7 grid-inner py-10 lg:py-14">
         <div
           data-api-url={import.meta.env.PUBLIC_API_URL ?? 'https://cv.dreayacucho.gob.pe/api'}
+          data-contact-email={profile.email}
           x-data="{
             name: '',
             email: '',
@@ -52,7 +92,9 @@ const profile = await getProfile();
               this.status = 'loading';
               this.errors = {};
               this.errorMessage = '';
-              const apiUrl = $el.closest('[data-api-url]')?.dataset?.apiUrl || 'https://cv.dreayacucho.gob.pe/api';
+              const container = $el.closest('[data-api-url]');
+              const apiUrl = container?.dataset?.apiUrl || 'https://cv.dreayacucho.gob.pe/api';
+              const contactEmail = container?.dataset?.contactEmail || '';
               try {
                 const res = await fetch(apiUrl + '/contact', {
                   method: 'POST',
@@ -85,114 +127,112 @@ const profile = await getProfile();
                 this.subject = '';
                 this.message = '';
               } catch {
-                this.errorMessage = 'Algo salió mal. Intenta de nuevo o escríbeme directamente a ' + '${profile.email}';
+                this.errorMessage = contactEmail
+                  ? 'Algo salió mal. Intenta de nuevo o escríbeme directamente a ' + contactEmail
+                  : 'Algo salió mal. Intenta de nuevo más tarde.';
                 this.status = 'error';
               }
             }
           }"
           @submit.prevent="submit"
         >
-          <form class="space-y-8">
+          <form class="space-y-6">
             {/* Honeypot */}
             <div class="absolute opacity-0 pointer-events-none" aria-hidden="true">
               <input type="text" name="website" tabindex="-1" autocomplete="off" x-model="website" />
             </div>
 
-            {/* Name */}
-            <div>
-              <label for="name" class="block text-[11px] uppercase tracking-[0.08em] text-secondary mb-3" style="font-family: var(--font-mono)">Nombre</label>
-              <input
-                type="text"
-                id="name"
-                x-model="name"
-                required
-                maxlength="255"
-                class="w-full bg-transparent border-0 border-b border-border py-2.5 text-[15px] text-text placeholder:text-secondary/30 focus:outline-none focus:border-accent transition-colors duration-150"
-                placeholder="Tu nombre"
-              />
-              <p x-show="errors.name" x-text="errors.name?.[0]" class="mt-2 text-[13px] text-error" style="display: none;"></p>
-            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {/* Name */}
+              <div>
+                <label for="name" class="block text-[12px] uppercase tracking-[0.08em] text-secondary mb-2 font-mono font-medium">
+                  Nombre
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  x-model="name"
+                  required
+                  maxlength="255"
+                  class="w-full bg-bg border border-border hover:border-border-strong focus:border-accent rounded-[4px] px-3.5 py-2.5 text-[15px] text-text placeholder:text-secondary transition-colors duration-150"
+                  placeholder="Tu nombre"
+                />
+                <p x-show="errors.name" x-text="errors.name?.[0]" class="mt-2 text-[13px] text-error" style="display: none;"></p>
+              </div>
 
-            {/* Email */}
-            <div>
-              <label for="email" class="block text-[11px] uppercase tracking-[0.08em] text-secondary mb-3" style="font-family: var(--font-mono)">Email</label>
-              <input
-                type="email"
-                id="email"
-                x-model="email"
-                required
-                maxlength="255"
-                class="w-full bg-transparent border-0 border-b border-border py-2.5 text-[15px] text-text placeholder:text-secondary/30 focus:outline-none focus:border-accent transition-colors duration-150"
-                placeholder="tu@email.com"
-              />
-              <p x-show="errors.email" x-text="errors.email?.[0]" class="mt-2 text-[13px] text-error" style="display: none;"></p>
+              {/* Email */}
+              <div>
+                <label for="email" class="block text-[12px] uppercase tracking-[0.08em] text-secondary mb-2 font-mono font-medium">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  x-model="email"
+                  required
+                  maxlength="255"
+                  class="w-full bg-bg border border-border hover:border-border-strong focus:border-accent rounded-[4px] px-3.5 py-2.5 text-[15px] text-text placeholder:text-secondary transition-colors duration-150"
+                  placeholder="tu@email.com"
+                />
+                <p x-show="errors.email" x-text="errors.email?.[0]" class="mt-2 text-[13px] text-error" style="display: none;"></p>
+              </div>
             </div>
 
             {/* Subject */}
             <div>
-              <label for="subject" class="block text-[11px] uppercase tracking-[0.08em] text-secondary mb-3" style="font-family: var(--font-mono)">
-                Asunto <span class="normal-case text-secondary/40">(opcional)</span>
+              <label for="subject" class="block text-[12px] uppercase tracking-[0.08em] text-secondary mb-2 font-mono font-medium">
+                Asunto <span class="normal-case tracking-normal text-secondary">(opcional)</span>
               </label>
               <input
                 type="text"
                 id="subject"
                 x-model="subject"
                 maxlength="255"
-                class="w-full bg-transparent border-0 border-b border-border py-2.5 text-[15px] text-text placeholder:text-secondary/30 focus:outline-none focus:border-accent transition-colors duration-150"
+                class="w-full bg-bg border border-border hover:border-border-strong focus:border-accent rounded-[4px] px-3.5 py-2.5 text-[15px] text-text placeholder:text-secondary transition-colors duration-150"
                 placeholder="¿De qué se trata?"
               />
             </div>
 
             {/* Message */}
             <div>
-              <label for="message" class="block text-[11px] uppercase tracking-[0.08em] text-secondary mb-3" style="font-family: var(--font-mono)">Mensaje</label>
+              <label for="message" class="block text-[12px] uppercase tracking-[0.08em] text-secondary mb-2 font-mono font-medium">
+                Mensaje
+              </label>
               <textarea
                 id="message"
                 x-model="message"
                 required
                 maxlength="5000"
                 rows="5"
-                class="w-full bg-transparent border-0 border-b border-border py-2.5 text-[15px] text-text placeholder:text-secondary/30 focus:outline-none focus:border-accent transition-colors duration-150 resize-y"
+                class="w-full bg-bg border border-border hover:border-border-strong focus:border-accent rounded-[4px] px-3.5 py-2.5 text-[15px] text-text placeholder:text-secondary transition-colors duration-150 resize-y"
                 placeholder="Escribe tu mensaje..."
               ></textarea>
               <p x-show="errors.message" x-text="errors.message?.[0]" class="mt-2 text-[13px] text-error" style="display: none;"></p>
             </div>
 
-            {/* Submit */}
-            <div class="pt-4 flex items-center justify-between">
+            {/* Submit & status */}
+            <div class="pt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <button
                 type="submit"
                 :disabled="status === 'loading'"
-                class="inline-flex items-center gap-2 text-[14px] text-accent hover:text-white hover:bg-accent px-5 py-2.5 border border-accent/30 rounded-sm transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed btn-tactile"
-                style="font-family: var(--font-mono)"
+                class="inline-flex items-center justify-center gap-2 text-[14px] font-medium bg-accent text-accent-contrast hover:bg-accent-hover border border-accent hover:border-accent-hover px-5 py-2.5 rounded-[4px] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer btn-tactile"
               >
                 <template x-if="status === 'loading'">
-                  <svg class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                  <svg class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
                 </template>
-                <span x-text="status === 'loading' ? 'Enviando...' : 'Enviar mensaje'"></span>
+                <span x-text="status === 'loading' ? 'Enviando...' : 'Enviar mensaje'">Enviar mensaje</span>
               </button>
 
-              {/* Status messages */}
-              <div class="flex items-center gap-3">
-                <span x-show="status === 'success'" class="text-[14px] text-accent" style="display: none;">
+              <div role="status" aria-live="polite">
+                <p x-show="status === 'success'" class="text-[14px] font-medium text-accent" style="display: none;">
                   Mensaje enviado
-                </span>
-                <span x-show="status === 'error' && errorMessage" x-text="errorMessage" class="text-[13px] text-error max-w-[280px] text-right" style="display: none;"></span>
+                </p>
+                <p x-show="status === 'error' && errorMessage" x-text="errorMessage" class="text-[13px] text-error max-w-[320px]" style="display: none;"></p>
               </div>
             </div>
           </form>
         </div>
       </div>
-
-      {/* Direct contact fallback */}
-      <div class="mt-10 pt-8 border-t border-border">
-        <p class="text-[14px] text-secondary text-center">
-          ¿Prefieres algo más directo?{' '}
-          <a href={`mailto:${profile.email}`} class="text-accent hover:text-accent-hover transition-colors duration-150 underline underline-offset-2">
-            {profile.email}
-          </a>
-        </p>
-      </div>
     </div>
-  </section>
+  </GridBand>
 </Layout>

@@ -1,0 +1,45 @@
+---
+interface Props {
+  as?: 'section' | 'div' | 'article' | 'header' | 'footer';
+  id?: string;
+  class?: string;
+  shellClass?: string;
+  markers?: boolean;
+  last?: boolean;
+}
+
+const {
+  as: Tag = 'section',
+  id,
+  class: bandClass = '',
+  shellClass = '',
+  markers = true,
+  last = false,
+} = Astro.props;
+---
+
+<Tag id={id} class:list={['grid-band', last && 'grid-band-last', bandClass]}>
+  <div class:list={['grid-shell', shellClass]}>
+    <slot />
+    {markers && !last && (
+      <>
+        <svg
+          class="grid-crosshair grid-crosshair-bl"
+          viewBox="0 0 9 9"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path d="M4.5 0v9M0 4.5h9" stroke="currentColor" stroke-width="1" />
+        </svg>
+        <svg
+          class="grid-crosshair grid-crosshair-br"
+          viewBox="0 0 9 9"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path d="M4.5 0v9M0 4.5h9" stroke="currentColor" stroke-width="1" />
+        </svg>
+      </>
+    )}
+  </div>
+</Tag>

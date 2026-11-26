@@ -1,128 +1,119 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import GridBand from '../../components/GridBand.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
-import { getProjects, getTechnologies } from '../../lib/api';
+import { getProjects } from '../../lib/api';
 
 const projects = await getProjects();
-const techGroups = await getTechnologies();
 
 const categories = ['Todos', ...new Set(projects.flatMap((p) => p.technologies.map((t) => t.category_label)))];
 const allTechs = [...new Map(projects.flatMap((p) => p.technologies).map((t) => [t.slug, t])).values()];
 allTechs.sort((a, b) => a.name.localeCompare(b.name));
 
-const base = '';
+const projectFilterMeta = projects.map((p) => ({
+  id: p.id,
+  categories: [...new Set(p.technologies.map((t) => t.category_label))],
+  techs: p.technologies.map((t) => t.slug),
+}));
 ---
 
-<Layout title="Proyectos" description="Una selección de trabajos recientes. Algunos son personales, otros fueron construidos para resolver problemas reales.">
-  <section class="pt-12 lg:pt-16 pb-6">
-    <div class="container-main">
+<Layout
+  title="Proyectos"
+  description="Una selección de trabajos recientes. Algunos son personales, otros fueron construidos para resolver problemas reales."
+>
+  <GridBand as="section">
+    <div class="grid-inner py-12 lg:py-16">
       <div class="section-marker mb-4">
         <span>Colección</span>
       </div>
-      <h1 class="text-[32px] lg:text-[44px] font-medium tracking-tighter leading-[1.1] text-text">Proyectos</h1>
-      <p class="mt-4 text-[16px] text-secondary max-w-[65ch] leading-relaxed">
+      <h1 class="text-[34px] sm:text-[42px] lg:text-[48px] font-semibold tracking-tighter leading-[1.08] text-text">
+        Proyectos
+      </h1>
+      <p class="mt-4 text-[16px] sm:text-[17px] text-secondary max-w-[62ch] leading-[1.7]">
         Una selección de trabajos recientes. Algunos son personales, otros fueron construidos para resolver problemas reales.
       </p>
     </div>
-  </section>
+  </GridBand>
 
-  {/* Filters with structural border */}
-  <section class="py-6 border-y border-border">
-    <div class="container-main">
-      <div
-        x-data={`{
-          activeCategory: 'Todos',
-          activeTech: '',
-          get filtered() {
-            return ${JSON.stringify(projects)}.filter(p => {
-              const categoryMatch = this.activeCategory === 'Todos' || p.technologies.some(t => t.category_label === this.activeCategory);
-              const techMatch = this.activeTech === '' || p.technologies.some(t => t.slug === this.activeTech);
-              return categoryMatch && techMatch;
-            });
-          }
-        }`}
-      >
-        <div class="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8">
-          {/* Category filters */}
-          <div class="flex flex-wrap items-center gap-1">
-            {categories.map((cat) => (
-              <button
-                type="button"
-                class="text-[13px] py-1.5 px-3 transition-colors duration-150 border-b-2 btn-tactile"
-                style="font-family: var(--font-mono)"
-                :class={`activeCategory === '${cat}' ? 'border-accent text-text' : 'border-transparent text-secondary hover:text-text'`}
-                @click={`activeCategory = '${cat}'`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-
-          {/* Divider */}
-          <div class="hidden sm:block w-px h-6 bg-border" aria-hidden="true"></div>
-
-          {/* Technology filter */}
-          <div class="flex items-center gap-2">
-            <span class="text-[11px] text-secondary uppercase tracking-wider" style="font-family: var(--font-mono)">Tecnología</span>
-            <select
-              x-model="activeTech"
-              class="appearance-none bg-transparent text-[13px] text-secondary border-b border-border py-1 pr-6 pl-0 cursor-pointer focus:outline-none focus:border-accent transition-colors duration-150"
-              style="font-family: var(--font-mono); background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2371717a%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22m6 9 6 6 6-6%22/%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right center;"
+  <GridBand as="section">
+    <div
+      x-data={`{
+        activeCategory: 'Todos',
+        activeTech: '',
+        items: ${JSON.stringify(projectFilterMeta)},
+        matches(id) {
+          const item = this.items.find(i => i.id === id);
+          if (!item) return false;
+          const categoryMatch = this.activeCategory === 'Todos' || item.categories.includes(this.activeCategory);
+          const techMatch = this.activeTech === '' || item.techs.includes(this.activeTech);
+          return categoryMatch && techMatch;
+        },
+        get visibleCount() {
+          return this.items.filter(i => this.matches(i.id)).length;
+        }
+      }`}
+    >
+      {/* Barra de filtros */}
+      <div class="grid-inner py-5 border-b border-border flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-surface/50">
+        <div class="flex flex-wrap items-center gap-1.5" role="group" aria-label="Filtrar por categoría">
+          {categories.map((cat) => (
+            <button
+              type="button"
+              class="text-[13px] font-mono py-1.5 px-3 rounded-[4px] border transition-colors duration-150 cursor-pointer btn-tactile"
+              :class={`activeCategory === '${cat}' ? 'border-accent bg-accent text-accent-contrast font-medium' : 'border-border bg-bg text-secondary hover:text-text hover:border-border-strong'`}
+              @click={`activeCategory = '${cat}'`}
             >
-              <option value="">Todas</option>
-              {allTechs.map((tech) => (
-                <option value={tech.slug}>{tech.name}</option>
-              ))}
-            </select>
-          </div>
+              {cat}
+            </button>
+          ))}
         </div>
 
-        {/* Projects grid */}
-        <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-px bg-border rounded-lg overflow-hidden border border-border">
-          <template x-for="project in filtered" :key="project.id">
-            <div class="bg-bg transition-all duration-150 ease-out" x-data="{ shown: false }" x-init="setTimeout(() => shown = true, 50)" :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'">
-              <article class="group h-full">
-                <a :href={`'${base}/proyectos/' + project.slug`} class="block h-full">
-                  <div class="aspect-video bg-surface overflow-hidden relative">
-                    <template x-if="project.featured_image_url">
-                      <img
-                        :src="project.featured_image_url"
-                        :alt="'Captura de ' + project.title"
-                        loading="lazy"
-                        class="w-full h-full object-cover transition-transform duration-300 ease group-hover:scale-[1.02]"
-                        width="780"
-                        height="439"
-                      />
-                    </template>
-                    <template x-if="!project.featured_image_url">
-                      <div class="w-full h-full flex items-center justify-center" style="font-family: var(--font-mono)">
-                        <span class="text-secondary text-2xl" x-text="project.title.charAt(0).toUpperCase()"></span>
-                      </div>
-                    </template>
-                  </div>
+        <div class="flex items-center gap-3">
+          <label for="tech-filter" class="text-[12px] text-secondary uppercase tracking-[0.08em] font-mono shrink-0">
+            Tecnología
+          </label>
+          <select
+            id="tech-filter"
+            x-model="activeTech"
+            class="bg-bg text-[13px] font-mono text-text border border-border hover:border-border-strong rounded-[4px] py-1.5 pl-3 pr-8 cursor-pointer transition-colors duration-150"
+          >
+            <option value="">Todas</option>
+            {allTechs.map((tech) => (
+              <option value={tech.slug}>{tech.name}</option>
+            ))}
+          </select>
+        </div>
+      </div>
 
-                  <div class="p-5 border-t border-border group-hover:border-accent/40 transition-colors duration-150">
-                    <h3 class="text-[16px] font-medium text-text leading-snug group-hover:text-accent transition-colors duration-150" x-text="project.title"></h3>
-                    <p class="mt-2 text-[14px] text-secondary leading-relaxed line-clamp-2" x-text="project.short_description" x-show="project.short_description"></p>
-
-                    <div class="mt-4 flex flex-wrap items-center gap-2" style="font-family: var(--font-mono)">
-                      <template x-for="(tech, idx) in project.technologies.slice(0, 3)" :key="tech.id">
-                        <span class="inline-flex items-center px-2 py-[3px] text-[11px] bg-surface text-text/70 border border-border/60 rounded-sm" x-text="tech.name"></span>
-                      </template>
-                      <span class="text-[11px] text-secondary" x-show="project.technologies.length > 3" x-text="'+' + (project.technologies.length - 3)"></span>
-                    </div>
-                  </div>
-                </a>
-              </article>
+      {/* Grilla de proyectos reutilizando ProjectCard + <Image> de astro:assets */}
+      <div class="overflow-hidden">
+        <div class="grid grid-cols-1 md:grid-cols-2 -mr-px -mb-px">
+          {projects.map((project) => (
+            <div
+              class="border-r border-b border-border"
+              x-show={`matches(${project.id})`}
+            >
+              <ProjectCard project={project} />
             </div>
-          </template>
+          ))}
         </div>
+      </div>
 
-        {/* Empty state */}
-        <p x-show="filtered.length === 0" class="text-secondary text-[15px] mt-10 py-10 text-center border-t border-border" style="display: none;">
-          Nada aquí todavía con ese filtro.
-        </p>
+      {/* Estado vacío */}
+      <div
+        x-show="visibleCount === 0"
+        style="display: none;"
+        class="grid-inner py-16 text-center"
+      >
+        <p class="text-secondary text-[16px]">Nada aquí todavía con ese filtro.</p>
+        <button
+          type="button"
+          @click="activeCategory = 'Todos'; activeTech = ''"
+          class="mt-4 inline-flex items-center px-3.5 py-2 text-[13px] font-mono text-accent border border-border hover:border-accent rounded-[4px] transition-colors duration-150 cursor-pointer"
+        >
+          Restablecer filtros
+        </button>
       </div>
     </div>
-  </section>
+  </GridBand>
 </Layout>

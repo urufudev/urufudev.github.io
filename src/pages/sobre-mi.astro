@@ -1,6 +1,7 @@
 ---
 import { marked } from 'marked';
 import Layout from '../layouts/Layout.astro';
+import GridBand from '../components/GridBand.astro';
 import { getProfile, getExperiences, getEducation, getTechnologies } from '../lib/api';
 import { formatPeriod } from '../lib/utils';
 
@@ -9,212 +10,245 @@ const experiences = await getExperiences();
 const education = await getEducation();
 const techGroups = await getTechnologies();
 
-const base = '';
+const bioHtml = profile.bio ? (marked.parse(profile.bio, { async: false }) as string) : '';
 
-// Parse markdown content
-const bioHtml = profile.bio ? marked.parse(profile.bio, { async: false }) as string : '';
+function formatTechLevel(level: number) {
+  const isFiveScale = level <= 5;
+  const percentage = isFiveScale
+    ? Math.min(100, Math.max(0, level * 20))
+    : Math.min(100, Math.max(0, level));
+  const label = isFiveScale ? `${level} / 5` : `${level}%`;
+  return { percentage, label };
+}
 ---
 
 <Layout title="Sobre mí" image={profile.avatar_url}>
-  <section class="pt-12 lg:pt-16 pb-6">
-    <div class="container-main">
+  {/* Perfil */}
+  <GridBand as="section">
+    <div class="grid-inner py-12 lg:py-16">
       <div class="section-marker mb-4">
         <span>Perfil</span>
       </div>
-      <h1 class="text-[32px] lg:text-[44px] font-medium tracking-tighter leading-[1.1] text-text">Sobre mí</h1>
+      <h1 class="text-[34px] sm:text-[42px] lg:text-[48px] font-semibold tracking-tighter leading-[1.08] text-text">
+        Sobre mí
+      </h1>
       {bioHtml && (
         <div class="mt-8 md-content" set:html={bioHtml} />
       )}
     </div>
-  </section>
+  </GridBand>
 
-  {/* Experience Timeline */}
-  <section class="py-16 lg:py-20 border-t border-border">
-    <div class="container-main">
-      <div class="section-marker mb-10">
+  {/* Experiencia */}
+  <GridBand as="section">
+    <div class="grid-inner py-10 lg:py-12 border-b border-border">
+      <div class="section-marker mb-3">
         <span>Experiencia</span>
       </div>
-
-      <div class="relative">
-        <div class="absolute left-0 top-2 bottom-2 w-px bg-border lg:left-[140px]" aria-hidden="true"></div>
-
-        <div class="space-y-0 divide-y divide-border">
-          {experiences.map((exp) => {
-            const descHtml = exp.description ? marked.parse(exp.description, { async: false }) as string : '';
-            return (
-              <div class="relative pl-6 lg:pl-[164px] py-8 first:pt-0 last:pb-0">
-                <div class={`absolute left-[-3px] top-10 w-[7px] h-[7px] rounded-full border ${exp.is_current ? 'border-accent bg-accent' : 'border-border bg-bg'} lg:left-[137px]`}></div>
-
-                <div class="lg:absolute lg:left-0 lg:top-8 lg:w-[120px]">
-                  <span class="text-[12px] text-secondary font-variant-numeric-tabular" style="font-family: var(--font-mono)">
-                    {formatPeriod(exp.started_at, exp.ended_at, exp.is_current)}
-                  </span>
-                </div>
-
-                <div class="mt-2 lg:mt-0">
-                  <div class="flex flex-wrap items-center gap-3">
-                    <h3 class="text-[17px] font-medium text-text">{exp.position}</h3>
-                    {exp.is_current && (
-                      <span class="text-[10px] uppercase tracking-wider text-accent border border-accent/20 px-2 py-0.5 rounded-full">
-                        Actual
-                      </span>
-                    )}
-                  </div>
-                  <p class="mt-1 text-[15px] text-secondary">{exp.company}</p>
-                  {exp.work_type_label && (
-                    <span class="mt-2 inline-block text-[11px] text-secondary/70" style="font-family: var(--font-mono)">
-                      {exp.work_type_label}
-                    </span>
-                  )}
-                  {descHtml && (
-                    <details class="mt-4 group">
-                      <summary class="text-[13px] text-secondary hover:text-text cursor-pointer list-none inline-flex items-center gap-1 transition-colors duration-150 btn-tactile">
-                        <span style="font-family: var(--font-mono)">[+]</span>
-                        <span>Detalles</span>
-                      </summary>
-                      <div class="mt-3 pl-6 border-l border-border md-content text-[15px]" set:html={descHtml} />
-                    </details>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      <h2 class="text-[24px] lg:text-[28px] font-semibold tracking-tight text-text">
+        Trayectoria profesional
+      </h2>
     </div>
-  </section>
 
-  {/* Education */}
-  <section class="py-16 lg:py-20 border-t border-border">
-    <div class="container-main">
-      <div class="section-marker mb-10">
+    <div class="divide-y divide-border">
+      {experiences.map((exp) => {
+        const descHtml = exp.description ? (marked.parse(exp.description, { async: false }) as string) : '';
+        return (
+          <div class="grid grid-cols-1 md:grid-cols-12">
+            <div class="md:col-span-4 lg:col-span-3 grid-inner pt-8 pb-2 md:py-8 flex flex-row md:flex-col items-center md:items-start justify-between md:justify-start gap-2">
+              <span class="text-[13px] text-secondary font-variant-numeric-tabular font-mono">
+                {formatPeriod(exp.started_at, exp.ended_at, exp.is_current)}
+              </span>
+              {exp.work_type_label && (
+                <span class="inline-block text-[12px] text-secondary bg-surface border border-border px-2 py-0.5 rounded-[3px] font-mono">
+                  {exp.work_type_label}
+                </span>
+              )}
+            </div>
+
+            <div class="md:col-span-8 lg:col-span-9 grid-inner pt-2 pb-8 md:py-8 md:border-l md:border-border">
+              <div class="flex flex-wrap items-center gap-3">
+                <h3 class="text-[18px] font-semibold text-text">{exp.position}</h3>
+                {exp.is_current && (
+                  <span class="text-[12px] font-mono text-accent bg-surface border border-accent px-2 py-0.5 rounded-[3px]">
+                    Actual
+                  </span>
+                )}
+              </div>
+              <p class="mt-1 text-[15px] text-secondary">{exp.company}</p>
+
+              {descHtml && (
+                <details class="mt-4 group">
+                  <summary class="text-[13px] font-mono text-accent hover:text-accent-hover cursor-pointer list-none inline-flex items-center gap-1.5 transition-colors duration-150 btn-tactile select-none">
+                    <span class="group-open:hidden">[+]</span>
+                    <span class="hidden group-open:inline">[-]</span>
+                    <span>Detalles</span>
+                  </summary>
+                  <div class="mt-4 pl-5 border-l border-border md-content text-[15px]" set:html={descHtml} />
+                </details>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </GridBand>
+
+  {/* Formación */}
+  <GridBand as="section">
+    <div class="grid-inner py-10 lg:py-12 border-b border-border">
+      <div class="section-marker mb-3">
         <span>Formación</span>
       </div>
+      <h2 class="text-[24px] lg:text-[28px] font-semibold tracking-tight text-text">
+        Educación
+      </h2>
+    </div>
 
-      <div class="space-y-0 divide-y divide-border">
-        {education.map((edu) => {
-          const descHtml = edu.description ? marked.parse(edu.description, { async: false }) as string : '';
-          return (
-            <div class="py-8 first:pt-0 last:pb-0">
-              <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2">
-                <h3 class="text-[17px] font-medium text-text">{edu.degree}</h3>
-                <span class="text-[12px] text-secondary font-variant-numeric-tabular shrink-0" style="font-family: var(--font-mono)">
-                  {formatPeriod(edu.started_at, edu.ended_at, !edu.ended_at)}
-                </span>
-              </div>
+    <div class="divide-y divide-border">
+      {education.map((edu) => {
+        const descHtml = edu.description ? (marked.parse(edu.description, { async: false }) as string) : '';
+        return (
+          <div class="grid grid-cols-1 md:grid-cols-12">
+            <div class="md:col-span-4 lg:col-span-3 grid-inner pt-8 pb-2 md:py-8">
+              <span class="text-[13px] text-secondary font-variant-numeric-tabular font-mono">
+                {formatPeriod(edu.started_at, edu.ended_at, !edu.ended_at)}
+              </span>
+            </div>
+
+            <div class="md:col-span-8 lg:col-span-9 grid-inner pt-2 pb-8 md:py-8 md:border-l md:border-border">
+              <h3 class="text-[18px] font-semibold text-text">{edu.degree}</h3>
               <p class="mt-1 text-[15px] text-secondary">{edu.institution}</p>
               {descHtml && (
                 <div class="mt-3 md-content text-[15px] text-secondary" set:html={descHtml} />
               )}
               {edu.certificate_url && (
-                <a href={edu.certificate_url} target="_blank" rel="noopener noreferrer" class="mt-3 inline-flex items-center gap-1.5 text-[13px] text-accent hover:text-accent-hover transition-colors duration-150 btn-tactile">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>
-                  Certificado
+                <a
+                  href={edu.certificate_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="mt-4 inline-flex items-center gap-1.5 text-[13px] font-mono text-accent hover:text-accent-hover transition-colors duration-150 underline-offset-4 hover:underline"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>
+                  <span>Certificado</span>
                 </a>
               )}
             </div>
-          );
-        })}
-      </div>
+          </div>
+        );
+      })}
     </div>
-  </section>
+  </GridBand>
 
-  {/* Technologies */}
-  <section class="py-16 lg:py-20 border-t border-border">
-    <div class="container-main">
-      <div class="section-marker mb-10">
+  {/* Habilidades */}
+  <GridBand as="section">
+    <div class="grid-inner py-10 lg:py-12 border-b border-border">
+      <div class="section-marker mb-3">
         <span>Habilidades</span>
       </div>
+      <h2 class="text-[24px] lg:text-[28px] font-semibold tracking-tight text-text">
+        Stack técnico
+      </h2>
+    </div>
 
-      <div class="space-y-12">
-        {techGroups.map((group) => (
-          <div>
-            <h3 class="text-[12px] uppercase tracking-[0.08em] text-secondary mb-6 flex items-center gap-3" style="font-family: var(--font-mono)">
-              <span class="w-4 h-px bg-border"></span>
+    <div class="divide-y divide-border">
+      {techGroups.map((group) => (
+        <div class="grid grid-cols-1 md:grid-cols-12">
+          <div class="md:col-span-4 lg:col-span-3 grid-inner pt-8 pb-3 md:py-8">
+            <h3 class="text-[13px] uppercase tracking-[0.08em] text-secondary font-mono font-medium">
               {group.label}
             </h3>
-
-            <div class="space-y-5">
-              {group.technologies.map((tech) => {
-                const opacity = tech.level > 70 ? 1 : tech.level > 40 ? 0.7 : 0.4;
-                return (
-                  <div class="tech-bar" data-level={tech.level} data-opacity={opacity}>
-                    <div class="flex items-center justify-between mb-2">
-                      <span class="text-[15px] text-text">{tech.name}</span>
-                      <span class="text-[11px] text-secondary" style="font-family: var(--font-mono)">{tech.level}%</span>
-                    </div>
-                    <div class="h-[3px] bg-border rounded-sm overflow-hidden">
-                      <div
-                        class="tech-bar-fill h-full bg-accent rounded-sm transition-all duration-600 ease-out"
-                        style={`width: 0%; opacity: ${opacity};`}
-                      ></div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
           </div>
-        ))}
-      </div>
-    </div>
-  </section>
 
-  {/* Contact */}
-  <section class="py-16 lg:py-20 border-t border-border">
-    <div class="container-main">
-      <div class="section-marker mb-8">
+          <div class="md:col-span-8 lg:col-span-9 grid-inner pt-2 pb-8 md:py-8 md:border-l md:border-border space-y-5">
+            {group.technologies.map((tech) => {
+              const { percentage, label } = formatTechLevel(tech.level);
+              return (
+                <div class="tech-bar" data-level={percentage}>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-[15px] font-medium text-text">{tech.name}</span>
+                    <span class="text-[12px] text-secondary font-mono font-variant-numeric-tabular">{label}</span>
+                  </div>
+                  <div class="h-[4px] bg-border rounded-[2px] overflow-hidden">
+                    <div
+                      class="tech-bar-fill h-full bg-accent rounded-[2px] transition-all duration-600 ease-out"
+                      style="width: 0%;"
+                    ></div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  </GridBand>
+
+  {/* Contacto directo */}
+  <GridBand as="section">
+    <div class="grid-inner py-10 lg:py-12 border-b border-border">
+      <div class="section-marker mb-3">
         <span>Contacto</span>
       </div>
+      <h2 class="text-[24px] lg:text-[28px] font-semibold tracking-tight text-text">
+        Información directa
+      </h2>
+    </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
-        <div class="space-y-4">
-          <div class="flex items-center gap-4 py-3 border-b border-border">
-            <span class="text-[12px] text-secondary w-20 shrink-0" style="font-family: var(--font-mono)">Email</span>
-            <a href={`mailto:${profile.email}`} class="text-[15px] text-text hover:text-accent transition-colors duration-150 btn-tactile">
-              {profile.email}
+    <div class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-border">
+      <div class="grid-inner py-8 space-y-4">
+        <div class="flex items-center gap-4 py-2.5 border-b border-border">
+          <span class="text-[12px] text-secondary w-24 shrink-0 font-mono uppercase tracking-[0.06em]">Email</span>
+          <a href={`mailto:${profile.email}`} class="text-[15px] text-text hover:text-accent transition-colors duration-150 break-all">
+            {profile.email}
+          </a>
+        </div>
+        {profile.phone && (
+          <div class="flex items-center gap-4 py-2.5 border-b border-border">
+            <span class="text-[12px] text-secondary w-24 shrink-0 font-mono uppercase tracking-[0.06em]">Tel</span>
+            <a href={`tel:${profile.phone}`} class="text-[15px] text-text hover:text-accent transition-colors duration-150">
+              {profile.phone}
             </a>
           </div>
-          {profile.phone && (
-            <div class="flex items-center gap-4 py-3 border-b border-border">
-              <span class="text-[12px] text-secondary w-20 shrink-0" style="font-family: var(--font-mono)">Tel</span>
-              <a href={`tel:${profile.phone}`} class="text-[15px] text-text hover:text-accent transition-colors duration-150 btn-tactile">
-                {profile.phone}
-              </a>
-            </div>
-          )}
-          {profile.location && (
-            <div class="flex items-center gap-4 py-3 border-b border-border">
-              <span class="text-[12px] text-secondary w-20 shrink-0" style="font-family: var(--font-mono)">Ubicación</span>
-              <span class="text-[15px] text-text">{profile.location}</span>
-            </div>
-          )}
-        </div>
-
-        <div class="flex flex-col justify-between">
-          <div class="space-y-3">
-            {profile.social_links.map((link) => (
-              <a
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="flex items-center justify-between py-3 border-b border-border text-[15px] text-text hover:text-accent transition-colors duration-150 btn-tactile group"
-              >
-                <span>{link.platform}</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-secondary group-hover:text-accent transition-colors duration-150" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
-              </a>
-            ))}
+        )}
+        {profile.location && (
+          <div class="flex items-center gap-4 py-2.5 border-b border-border">
+            <span class="text-[12px] text-secondary w-24 shrink-0 font-mono uppercase tracking-[0.06em]">Ubicación</span>
+            <span class="text-[15px] text-text">{profile.location}</span>
           </div>
+        )}
+      </div>
 
-          {profile.cv_url && (
-            <a href={profile.cv_url} target="_blank" rel="noopener noreferrer" class="mt-6 inline-flex items-center gap-2 text-[15px] text-accent hover:text-accent-hover transition-colors duration-150 group btn-tactile">
-              Descargar CV completo
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-150 group-hover:translate-y-0.5" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+      <div class="grid-inner py-8 flex flex-col justify-between gap-6">
+        <div class="divide-y divide-border border-y border-border">
+          {profile.social_links.map((link) => (
+            <a
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-between py-3 text-[15px] text-text hover:text-accent transition-colors duration-150 group"
+            >
+              <span>{link.platform}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="text-secondary group-hover:text-accent transition-transform duration-150 group-hover:translate-x-0.5" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
             </a>
-          )}
+          ))}
         </div>
+
+        {profile.cv_url && (
+          <div>
+            <a
+              href={profile.cv_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 px-4 py-2.5 text-[14px] font-medium bg-accent text-accent-contrast border border-accent hover:bg-accent-hover hover:border-accent-hover rounded-[4px] transition-colors duration-150 group btn-tactile"
+            >
+              <span>Descargar CV completo</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-150 group-hover:translate-y-0.5" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            </a>
+          </div>
+        )}
       </div>
     </div>
-  </section>
+  </GridBand>
 
   <script>
     const observer = new IntersectionObserver((entries) => {

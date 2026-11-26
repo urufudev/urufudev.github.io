@@ -14,12 +14,12 @@ interface Props {
 }
 
 const profile = await getProfile();
-const { 
-  title, 
+const {
+  title,
   description = profile.bio ?? profile.professional_title,
   image,
   type = 'website',
-  publishDate
+  publishDate,
 } = Astro.props;
 const pageTitle = title ? `${title} · ${profile.name}` : profile.name;
 ---
@@ -30,10 +30,10 @@ const pageTitle = title ? `${title} · ${profile.name}` : profile.name;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    
-    <SEO 
-      title={pageTitle} 
-      description={description} 
+
+    <SEO
+      title={pageTitle}
+      description={description}
       image={image}
       type={type}
       publishDate={publishDate}
@@ -51,19 +51,22 @@ const pageTitle = title ? `${title} · ${profile.name}` : profile.name;
       })();
     </script>
   </head>
-  <body class="min-h-screen">
-    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-bg focus:text-text focus:border focus:border-border focus:rounded-md">
+  <body class="min-h-screen bg-bg text-text">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:bg-bg focus:text-text focus:border focus:border-accent focus:rounded-[4px] focus:text-[13px] focus:font-mono"
+    >
       Saltar al contenido
     </a>
 
-    <div class="flex flex-col lg:flex-row min-h-screen">
+    <div class="grid-canvas flex flex-col min-h-screen">
       <Navigation profile={profile} />
 
-      <main id="main" class="flex-1 min-w-0 relative">
-        <div class="lg:hidden h-px bg-border" aria-hidden="true"></div>
+      <main id="main" class="flex-1 min-w-0 relative flex flex-col">
         <slot />
-        <Footer profile={profile} />
       </main>
+
+      <Footer profile={profile} />
     </div>
   </body>
 </html>
